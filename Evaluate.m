@@ -15,7 +15,8 @@ lastprice = lastprice(lastprice~=0);
 delta = abs(ansprice-realprice);
 
 % где ошиблись в тренде
-I = (realprice>lastprice)~=(ansprice>lastprice);
+I = ((realprice>lastprice)&(ansprice>lastprice))|((realprice<lastprice)&(ansprice<lastprice));
+I = ~I;
 delta(I) = delta(I).^2;
 
 % ошибка прогноза
