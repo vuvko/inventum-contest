@@ -21,7 +21,7 @@ mean(E) % средняя ошибка
 clf
 hold on;
 [test realprice lastprice] = DeletePoints(price1); % просто приводим к тому виду, в котором test9 и test10
-test = DjBenchmark1(test); % прогноз
+test = SdvReclaim(test); % прогноз
 PlotPrice(test, 'b') % прогноз
 test(:,end) = realprice;
 PlotPrice(test, 'r') % настоящие значения
