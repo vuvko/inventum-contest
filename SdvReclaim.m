@@ -1,4 +1,4 @@
-function price = SdvReclaim(price, alpha = 0.8, beta = 0.8, gamma = 0.1)
+function price = SdvReclaim(price, alpha = 1, beta = 1, gamma = 0.35)
 
 % так формировалось обучение!!!
 N = 8; % # кусков
