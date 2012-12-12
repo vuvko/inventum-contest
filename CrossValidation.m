@@ -6,17 +6,17 @@ load contestinventumdata.mat;
 eps = 0.1;
 
 % лог-файл
-fid = fopen("cv.log", "w");
+fid = fopen("cv.log", "a");
 
 % устанавливаем границы
-alpha_min = 0;
-alpha_max = 1;
+alpha_min = 0.5;
+alpha_max = 0.99;
 
-beta_min = 0;
-beta_max = 1;
+beta_min = 0.5;
+beta_max = 0.99;
 
-gamma_min = 0;
-gamma_max = 1;
+gamma_min = 0.05;
+gamma_max = 0.5;
 % устанавливаем шаг
 alpha_step = 0.05;
 
@@ -24,9 +24,9 @@ beta_step = 0.05;
 
 gamma_step = 0.05;
 
-alpha = alpha_min;
-beta = beta_min;
-gamma = gamma_min;
+alpha = 0.915; % 0.99
+beta = 0.875; % 0.89
+gamma = 0.17; % 0.35
 
 alpha_opt = -1;
 beta_opt = -1;
@@ -34,23 +34,36 @@ gamma_opt = -1;
 
 run Test.m;
 E_min = E
+E_mins = zeros(100000, length(E));
+pars = zeros(100000, 3);
+i = 1;
 
+fprint_time(1, time());
 printf("Starting cross-validation.\n");
+fprint_time(fid, time());
 fprintf(fid, "Starting cross-validation.\n");
 fflush(1);
 fflush(fid);
 
-for alpha = alpha_max:-alpha_step:alpha_min
-    for beta = beta_max:-beta_step:beta_min
+
+for beta = beta_max:-beta_step:beta_min
+    for alpha = alpha_max:-alpha_step:alpha_min
         for gamma = gamma_min:gamma_step:gamma_max
+            fprint_time(1, time());
+            printf("parameters: %.2f %.2f %.2f\n", alpha, beta, gamma);
+            %start_time = time();
             run Test.m;
+            %end_time= time();
+            fflush(1);
             
             if (mean(E) < mean(E_min) - eps)
                 E_min = E;
                 alpha_opt = alpha;
                 beta_opt = beta;
                 gamma_opt = gamma;
+                fprint_time(1, time());
                 printf("New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
+                fprint_time(fid, time());
                 fprintf(fid, "New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
                 
                 fflush(1);
