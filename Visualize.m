@@ -3,7 +3,7 @@ function Visualize(th, yh, tf, yf, remainder)
 len = length(th);
 tail_len = floor(len / remainder);
 tail = yh(end - tail_len + 1:end);
-block_size = 400;
+block_size = 3;
 block_num = floor(2 * len / block_size) - 1;
 blocks = zeros(1, block_num);
 mins = zeros(1, block_num);
