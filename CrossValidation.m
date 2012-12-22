@@ -9,14 +9,14 @@ eps = 0.1;
 fid = fopen("cv.log", "a");
 
 % устанавливаем границы
-alpha_min = 1.0;
+alpha_min = 0.6;
 alpha_max = 1.0;
 
-beta_min = 1.0;
-beta_max = 1.0;
+beta_min = 0.0;
+beta_max = 0.4;
 
-gamma_min = 0.35;
-gamma_max = 0.35;
+gamma_min = 0.15;
+gamma_max = 0.45;
 % устанавливаем шаг
 alpha_step = 0.05;
 
@@ -47,10 +47,10 @@ fflush(1);
 fflush(fid);
 
 
-for beta = beta_max:-beta_step:beta_min
+for beta = beta_min:beta_step:beta_max
     for alpha = alpha_max:-alpha_step:alpha_min
         for gamma = gamma_min:gamma_step:gamma_max
-        for first = 100:10:5000
+        %for first = 100:10:5000
             fprint_time(1, time());
             printf("parameters: %.2f %.2f %.2f\n", alpha, beta, gamma);
             %start_time = time();
@@ -71,7 +71,7 @@ for beta = beta_max:-beta_step:beta_min
                 fflush(1);
                 fflush(fid);
             end
-        end
+        %end
         end
     end
 end

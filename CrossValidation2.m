@@ -12,17 +12,17 @@ fid = fopen("cv2.log", "a");
 alpha_min = 0.5;
 alpha_max = 0.99;
 
-beta_min = 0.5;
-beta_max = 0.99;
+beta_min = 0.0;
+beta_max = 0.45;
 
 gamma_min = 0.001;
 gamma_max = 0.5;
 % устанавливаем шаг
-alpha_step = 0.001;
+alpha_step = 0.005;
 
-beta_step = 0.001;
+beta_step = 0.005;
 
-gamma_step = 0.010;
+gamma_step = 0.050;
 
 alpha = alpha_min;
 beta = beta_min;
