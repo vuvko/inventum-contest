@@ -13,10 +13,10 @@ alpha_min = 0.6;
 alpha_max = 1.0;
 
 beta_min = 0.0;
-beta_max = 0.4;
+beta_max = 0.0;
 
 gamma_min = 0.15;
-gamma_max = 0.45;
+gamma_max = 0.0;
 % устанавливаем шаг
 alpha_step = 0.05;
 
