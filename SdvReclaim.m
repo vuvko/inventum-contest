@@ -1,4 +1,4 @@
-function price = SdvReclaim(price, alpha = 0.78, beta = 0.2, gamma = 0.35)
+function price = SdvReclaim(price, params)
 
 % так формировалось обучение!!!
 N = 8; % # кусков
@@ -25,11 +25,11 @@ beta_step = 0.05;
 gamma_step = 0.05;
 points_step = 2;
 
-points = 1;
+params.points = 1;
 
 % сделать прогнозы
 for i=1:N
-    fprintf("Number %3d\n", i);
+    %fprintf("Number %3d\n", i);
     fflush(1);
     
     th = t(Ibeg(i):(Iend(i)-k));
@@ -37,121 +37,40 @@ for i=1:N
     
     tf = t(Iend(i)-(k-1):Iend(i));
     
-    
-    l = length(tf);
-    thc = th(1 : end - l);
-    yhc = yh(1 : end - l);
-    tfc = th(end - l + 1 : end);
-    
-    last = zeros(size(yh));
-    last(end - l + 1 : end) = yh(end - l);
-    
-    Err_l = 100000;
-    Err_min = Err_l;
-    
-    p = yh;
-    
-    alpha_opt = alpha;
-    beta_opt = beta;
-    gamma_opt = gamma;
-    points_opt = points;
-    alpha_new = alpha;
-    beta_new = beta;
-    gamma_new = gamma;
-    points_new = points;
-
-    p(end - l + 1 : end) = ...
-        SdvForecast2(thc, yhc, tfc, alpha_opt, beta_opt, gamma_opt, points_opt);
-    Err = Evaluate(p, yh, last);
-    
-    %while abs(Err_l - Err) > eps
-    
-        Err_l = Err;
-    
-        for alpha1 = alpha_max:-alpha_step:alpha_min
-            p(end - l + 1 : end) = ...
-                SdvForecast2(thc, yhc, tfc, alpha1, beta_opt, gamma_opt, points_opt);
-            Err = Evaluate(p, yh, last);
-            if (Err < Err_min) 
-                alpha_new = alpha1;
-                Err_min = Err;
-            end
-        end
-        
-        Err_alpha = Err_min;
-        Err_min = Err_l;
-        alpha_opt = alpha_new;
-        
-        for beta1 = beta_max:-beta_step:beta_min
-            p(end - l + 1 : end) = ...
-                SdvForecast2(thc, yhc, tfc, alpha_opt, beta1, gamma_opt, points_opt);
-            Err = Evaluate(p, yh, last);
-            if (Err < Err_min) 
-                beta_new = beta1;
-                Err_min = Err;
-            end
-        end
-       
-        Err_beta = Err_min;
-        Err_min = Err_l;
-        beta_opt = beta_new;
-       
-        for gamma1 = gamma_max:-gamma_step:gamma_min
-            p(end - l + 1 : end) = ...
-                SdvForecast2(thc, yhc, tfc, alpha_opt, beta_opt, gamma1, points_opt);
-            Err = Evaluate(p, yh, last);
-            if (Err < Err_min) 
-                gamma_new = gamma1;
-                Err_min = Err;
-            end
-        end
-        
-        Err_gamma = Err_min;
-        Err_min = Err_l;
-        gamma_opt = gamma_new;
-        
-        for points1 = points_max:-points_step:points_min
-            p(end - l + 1 : end) = ...
-                SdvForecast2(thc, yhc, tfc, alpha_opt, beta_opt, gamma_opt, points1);
-            Err = Evaluate(p, yh, last);
-            if (Err < Err_min) 
-                points_new = points1;
-                Err_min = Err;
-            end
-        end
-        
-        Err_points = Err_min;
-        
-        Err_min = min([Err_alpha, Err_beta, Err_gamma, Err_points]);
-        
-        alpha_opt = alpha_new;
-        beta_opt = beta_new;
-        gamma_opt = gamma_new;
-        points_opt = points_new;
-        
-        p(end - l + 1 : end) = ...
-               SdvForecast2(thc, yhc, tfc, alpha, beta, gamma, points);
-        
-        Err = Evaluate(p, yh, last);
-        printf("Err - %.4f with params: %.2f %.2f %.2f %d\n", ...
-            Err, alpha_opt, beta_opt, gamma_opt, points_opt);
-        printf("Min - %.4f\n", Err_min);
-        fflush(1);
-    
-    %Err = Evaluate(p, yh, last);
-    
-    %end
-    
-    
-    
+    %plot([tf(1), tf(end)], [yh(end), yh(end)], 'm');
     price(Iend(i)-(k-1):Iend(i), end) = ...
         ... %SdvForecast(th, yh, tf, 500);
-        SdvForecast2(th, yh, tf, alpha_opt, beta_opt, gamma_opt, points_opt);
+        SdvForecast2(th, yh, tf, params);
+        %DjForecast4(th, yh, tf);
 end;
 
 % функция прогнозирования
 
-function yf = SdvForecast2(thi, yhi, tfi, alpha = 1, beta = 1, gamma = 0.35, points = 1)
+function yf = SdvForecast2(thi, yhi, tfi, params)
+
+if (isfield(params, "alpha"))
+    alpha = params.alpha;
+else
+    alpha = 0.95;
+end
+
+if (isfield(params, "beta"))
+    beta = params.beta;
+else
+    beta = 0.15;
+end
+
+if (isfield(params, "gamma"))
+    gamma = params.gamma
+else
+    gamma = 0.35;
+end
+
+if (isfield(params, "points"))
+    points = params.points;
+else
+    points = 1;
+end
 
 th = thi(:);
 minth = min(th);
@@ -189,14 +108,14 @@ z = A * filter;
 
 for i = 2 : length(I)
     z_prev = z(I(i) - points + 1 : I(i));
-    b_prev = b;
-    b = gamma * (s - s_prev) + (1 - gamma) * b_prev;
+    %b_prev = b;
+    %b = gamma * (s - s_prev) + (1 - gamma) * b_prev;
     s_prev = s;
-    eps = beta * (s_prev - z_prev) + (1 - beta) * eps;
+    %eps = beta * (s_prev - z_prev) + (1 - beta) * eps;
     s = alpha * z_prev + (1 - alpha) * (s_prev - b_prev);
 end
 
-z = s;
+ans = s;
 yf = zeros(size(tf)) + yh(end);
 
 Idx = round(linspace(1, length(yf), points + 1));
@@ -204,13 +123,37 @@ bg = Idx(1:end-1);
 ed = Idx(2:end);
 
 for j = 1 : points
-    x1 = tf(bg(j));
-    x2 = tf(ed(j));
-    y1 = yf(bg(j));
-    y2 = z(j);
+    %x1 = tf(bg(j));
+    %x2 = tf(ed(j));
+    %y1 = yf(bg(j));
+    %y2 = ans(j);
     
-    k = (y1 - y2) / (x1 - x2);
-    b = (x1 * y2 - x2 * y1) / (x1 - x2);
+    %k = (y1 - y2) / (x1 - x2);
+    %b = (x1 * y2 - x2 * y1) / (x1 - x2);
     
-    yf(bg(j) : ed(j)) = k * tf(bg(j) : ed(j)) + b;
+    %yf(bg(j) : ed(j)) = k * tf(bg(j) : ed(j)) + b;
+    yf(bg(j) : ed(j)) = ans(j);
 end
+
+function yf = DjForecast4(th, yh, tf)
+t0 = min(th);
+t1 = max(th);
+ 
+X = [];
+j = 1;
+ 
+for ti = t0:5:t1
+    yy = yh((th>=ti)&(th<(ti+5)));
+    if isempty(yy)
+        X(j) = X(j-1);
+    else
+        X(j) = mean(yy);
+    end;
+    j = j + 1;
+end;
+ 
+X = [X(end-3:end)];
+ 
+C = [-0.0229    0.0862   -0.2936    1.2303]';
+ 
+yf = tf*0 + X*C;
