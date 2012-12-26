@@ -18,11 +18,11 @@ beta_max = 0.0;
 gamma_min = 0.15;
 gamma_max = 0.0;
 % устанавливаем шаг
-alpha_step = 0.05;
+alpha_step = 0.01;
 
 beta_step = 0.05;
 
-gamma_step = 0.05;
+gamma_step = 0.02;
 
 alpha = 0.915; % 0.99
 beta = 0.875; % 0.89

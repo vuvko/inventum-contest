@@ -29,7 +29,7 @@ beta = beta_min;
 gamma = gamma_min;
 
 alpha_opt = 0.917; % 0.99
-beta_opt = 0.871; % 0.913
+beta_opt = 0.117; % 0.913
 gamma_opt = 0.175; % 0.39
 
 run Test.m;
@@ -45,14 +45,14 @@ fprintf(fid, "Starting cross-validation.\n");
 fflush(1);
 fflush(fid);
 
-while abs(mean(E_prev) - mean(E_min)) > eps
+while (abs(mean(E_prev) - mean(E_min)) > eps) && (iter < 50)
 
 fprint_time(1, time());
 printf("Iteration: %d\n", iter);
 fprint_time(fid, time());
 fprintf(fid, "Iteration: %d\n", iter);
 
-iter = iter + 1
+iter = iter + 1;
 
 fflush(1); fflush(fid);
 
@@ -64,7 +64,7 @@ gamma = gamma_opt;
 for alpha = alpha_max:-alpha_step:alpha_min
     
     fprint_time(1, time());
-    printf("parameters: %.2f %.2f %.2f\n", alpha, beta, gamma);
+    printf("parameters: %.3f %.3f %.3f\n", alpha, beta, gamma);
     
     run Test.m;
     
@@ -74,9 +74,9 @@ for alpha = alpha_max:-alpha_step:alpha_min
         E_min = E;
         alpha_opt = alpha;
         fprint_time(1, time());
-        printf("New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
+        printf("New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
         fprint_time(fid, time());
-        fprintf(fid, "New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
+        fprintf(fid, "New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
                 
         fflush(1);
         fflush(fid);
@@ -89,7 +89,7 @@ alpha = alpha_opt;
 for beta = beta_max:-beta_step:beta_min
     
     fprint_time(1, time());
-    printf("parameters: %.2f %.2f %.2f\n", alpha, beta, gamma);
+    printf("parameters: %.3f %.3f %.3f\n", alpha, beta, gamma);
     
     run Test.m;
     
@@ -99,8 +99,10 @@ for beta = beta_max:-beta_step:beta_min
         E_min = E;
         beta_opt = beta;
         fprint_time(1, time());
-        printf("New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
-        
+        printf("New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
+        fprint_time(fid, time());
+        fprintf(fid, "New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
+                
         fflush(1);
         fflush(fid);
     end
@@ -112,7 +114,7 @@ beta = beta_opt;
 for gamma = gamma_max:-gamma_step:gamma_min
     
     fprint_time(1, time());
-    printf("parameters: %.2f %.2f %.2f\n", alpha, beta, gamma);
+    printf("parameters: %.3f %.3f %.3f\n", alpha, beta, gamma);
     
     run Test.m;
     
@@ -122,8 +124,10 @@ for gamma = gamma_max:-gamma_step:gamma_min
         E_min = E;
         gamma_opt = gamma;
         fprint_time(1, time());
-        printf("New minimum: %.3f\n On parameters: %.2f %.2f %.2f\n", mean(E), alpha, beta, gamma);
-        
+        printf("New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
+        fprint_time(fid, time());
+        fprintf(fid, "New minimum: %.3f\n On parameters: %.3f %.3f %.3f\n", mean(E), alpha, beta, gamma);
+                
         fflush(1);
         fflush(fid);
     end
